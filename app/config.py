@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     DB_NAME: str
     DATABASE_URL: str = None
 
-    @model_validator(mode='before')
+    #@model_validator(mode='before')
     @classmethod
     def get_database_url(cls, values):
         values["DATABASE_URL"] = (
