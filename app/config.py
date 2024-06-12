@@ -1,28 +1,22 @@
-#from typing import Literal
-from pydantic_settings import BaseSettings
-from pydantic import model_validator
+import os
 
+from dotenv import load_dotenv
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+load_dotenv()
 
 
 class Settings(BaseSettings):
-    DB_HOST: str
-    DB_PORT: int
-    DB_USER: str
-    DB_PASS: str
-    DB_NAME: str
-    DATABASE_URL: str = None
+    model_config = SettingsConfigDict(env_file=".env")
+    # Database
+    DB_HOST: str = os.getenv("DB_HOST")
+    DB_PORT: int = os.getenv("DB_PORT")
+    DB_USER: str = os.getenv("DB_USER")
+    DB_PASS: str = os.getenv("DB_PASS")
+    DB_NAME: str = os.getenv("DB_NAME")
+    DATABASE_URL: str = f"postgresql+asyncpg://{DB_USER}:{DB_PASS}@{DB_HOST}/{DB_NAME}"
 
-    #@model_validator(mode='before')
-    @classmethod
-    def get_database_url(cls, values):
-        values["DATABASE_URL"] = (
-            f"postgresql+asyncpg://{values['DB_USER']}:{values['DB_PASS']}@{values['DB_HOST']}:{values['DB_PORT']}/{values['DB_NAME']}"
-        )
-        return values
 
-    class Config:
-        env_file = ".env"
 
 settings = Settings()
 print()
-
